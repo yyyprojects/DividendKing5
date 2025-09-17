@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF--8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Dividend Kings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Light Beige, Dark Grey, Muted Gold, Gentle Blue) -->
+    <!-- Application Structure Plan: A single-page, top-down narrative structure. Starts with a simple definition, visually compares Kings to other tiers, details benefits and risks in digestible card layouts, and ends with an interactive explorer. This flow guides a novice user from basic concept to practical examples, prioritizing understanding over a rigid report format. The interactive chart allows for self-directed discovery. -->
+    <!-- Visualization & Content Choices: Report Info: Dividend stock tiers -> Goal: Organize/Compare -> Viz: Custom CSS hierarchy diagram -> Interaction: Click-to-highlight -> Justification: Visually separates concepts for clarity. | Report Info: Example companies -> Goal: Explore/Compare -> Viz: Interactive bar chart (Chart.js/Canvas) + dynamic list -> Interaction: Sector filter updates both chart and list -> Justification: Allows users to actively engage with the data and see relationships between companies in a specific sector. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF6;
+            color: #3a3a3a;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #D4AF37;
+        }
+        .tier-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .tier-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .crown-icon {
+            font-size: 2rem;
+            color: #D4AF37;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800">Dividend Kings</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#definition" class="nav-link text-gray-600 font-medium">Definition</a>
+                <a href="#hierarchy" class="nav-link text-gray-600 font-medium">Hierarchy</a>
+                <a href="#benefits" class="nav-link text-gray-600 font-medium">Why Invest?</a>
+                <a href="#explorer" class="nav-link text-gray-600 font-medium">Explorer</a>
+                <a href="#risks" class="nav-link text-gray-600 font-medium">Risks</a>
+            </div>
+             <div class="md:hidden">
+                <select id="mobile-nav" class="bg-white border border-gray-300 rounded-md py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent">
+                    <option value="#definition">Definition</option>
+                    <option value="#hierarchy">Hierarchy</option>
+                    <option value="#benefits">Why Invest?</option>
+                    <option value="#explorer">Explorer</option>
+                    <option value="#risks">Risks</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="definition" class="text-center min-h-[60vh] flex flex-col justify-center items-center">
+            <div class="max-w-4xl">
+                <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 mb-6">What is a <span class="text-[#D4AF37]">Dividend King</span>?</h2>
+                <p class="text-lg md:text-xl text-gray-600 mb-8">
+                    Imagine a company that has not just paid its shareholders a slice of its profits (a dividend) but has <span class="font-semibold">increased</span> that payment every single year for at least half a century. That's a Dividend King. It's a title of honor for companies with an exceptionally long history of rewarding their investors consistently, through good times and bad.
+                </p>
+                <div class="bg-white p-8 rounded-2xl shadow-lg inline-flex flex-col items-center">
+                     <span class="crown-icon mb-2">👑</span>
+                    <p class="text-5xl md:text-7xl font-bold text-[#6B7A8F]">50+</p>
+                    <p class="text-base md:text-lg font-semibold text-gray-700 mt-2">Consecutive Years of Dividend Increases</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="hierarchy" class="py-16 md:py-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">The Royal Court of Dividends</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Dividend Kings are at the top, but they're part of a larger family of reliable dividend-paying companies. This hierarchy helps investors categorize companies based on their dividend consistency.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="tier-card bg-white p-8 rounded-2xl shadow-lg border-2 border-transparent text-center">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Dividend Champions</h3>
+                    <p class="text-4xl font-bold text-[#6B7A8F] mb-4">10+</p>
+                    <p class="text-gray-600">Years of consecutive dividend increases. This is the first step toward greatness.</p>
+                </div>
+                <div class="tier-card bg-white p-8 rounded-2xl shadow-lg border-2 border-transparent text-center">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Dividend Aristocrats</h3>
+                    <p class="text-4xl font-bold text-[#6B7A8F] mb-4">25+</p>
+                    <p class="text-gray-600">Years of increases. These companies must also be part of the S&P 500 index.</p>
+                </div>
+                <div class="tier-card bg-white p-8 rounded-2xl shadow-xl border-2 border-[#D4AF37] text-center relative">
+                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-[#D4AF37] text-white px-4 py-1 rounded-full text-sm font-semibold">ELITE STATUS</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Dividend Kings</h3>
+                    <p class="text-4xl font-bold text-[#D4AF37] mb-4">50+</p>
+                    <p class="text-gray-600">Years of increases. The pinnacle of dividend reliability. No S&P 500 membership is required.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="benefits" class="py-16 md:py-24 bg-gray-50 -mx-6 px-6 rounded-3xl">
+            <div class="text-center mb-12 max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Why Might You Invest in a King?</h2>
+                <p class="mt-4 text-lg text-gray-600">Dividend Kings are often appealing to investors looking for stability and reliable income. Their long track record demonstrates several key strengths that have stood the test of time.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Reliable Income</h3>
+                    <p class="text-gray-600">Their defining trait is a dependable, growing stream of income paid out to shareholders, which can be especially valuable in retirement.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Proven Stability</h3>
+                    <p class="text-gray-600">To raise dividends for 50+ years, a company must have a durable business model that has survived numerous recessions and market downturns.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Compounding Power</h3>
+                    <p class="text-gray-600">Reinvesting these growing dividends can significantly accelerate the growth of your investment over the long term, a concept known as compounding.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Shareholder-Friendly</h3>
+                    <p class="text-gray-600">A long history of dividend hikes shows a strong commitment from the company's management to return value to its shareholders.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="explorer" class="py-16 md:py-24">
+            <div class="text-center mb-12 max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Meet the Kings</h2>
+                <p class="mt-4 text-lg text-gray-600">Dividend Kings come from various industries, but they often share a common theme of selling essential goods and services. Use the filter below to explore some examples and see how their dividend growth streaks compare.</p>
+            </div>
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                    <label for="sector-filter" class="font-semibold text-gray-700">Filter by Sector:</label>
+                    <select id="sector-filter" class="w-full sm:w-auto bg-gray-100 border border-gray-300 rounded-md py-2 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]">
+                        <option value="All">All Sectors</option>
+                        <option value="Consumer Staples">Consumer Staples</option>
+                        <option value="Industrials">Industrials</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Financials">Financials</option>
+                    </select>
+                </div>
+
+                <div class="chart-container mb-8">
+                    <canvas id="kingsChart"></canvas>
+                </div>
+
+                <div id="kings-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                </div>
+            </div>
+        </section>
+
+        <section id="risks" class="py-16 md:py-24 bg-gray-50 -mx-6 px-6 rounded-3xl">
+             <div class="text-center mb-12 max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Remember the Royal Risks</h2>
+                <p class="mt-4 text-lg text-gray-600">While impressive, investing in Dividend Kings isn't without potential downsides. A balanced perspective is crucial for any investment decision.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Slower Growth</h3>
+                    <p class="text-gray-600">These are typically large, mature companies. Their stock price may not grow as quickly as younger, more innovative companies.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Interest Rate Sensitivity</h3>
+                    <p class="text-gray-600">When interest rates rise, safer investments like bonds can become more attractive, potentially making dividend stocks less appealing.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Yield Traps</h3>
+                    <p class="text-gray-600">A high dividend yield might be a warning sign that the stock price has fallen due to business problems, putting future dividends at risk.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">No Guarantees</h3>
+                    <p class="text-gray-600">Past performance is not a guarantee of future results. Even a King can face challenges that force it to cut its dividend, losing its status.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>This information is for educational purposes only and not financial advice. Always conduct your own research before investing.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dividendKingsData = [
+                { name: 'Procter & Gamble', ticker: 'PG', sector: 'Consumer Staples', years: 69 },
+                { name: 'Dover Corp', ticker: 'DOV', sector: 'Industrials', years: 70 },
+                { name: 'Genuine Parts', ticker: 'GPC', sector: 'Industrials', years: 69 },
+                { name: 'Emerson Electric', ticker: 'EMR', sector: 'Industrials', years: 69 },
+                { name: '3M Co', ticker: 'MMM', sector: 'Industrials', years: 66 },
+                { name: 'Cincinnati Financial', ticker: 'CINF', sector: 'Financials', years: 65 },
+                { name: 'Johnson & Johnson', ticker: 'JNJ', sector: 'Healthcare', years: 64 },
+                { name: 'Coca-Cola', ticker: 'KO', sector: 'Consumer Staples', years: 63 },
+                { name: 'Colgate-Palmolive', ticker: 'CL', sector: 'Consumer Staples', years: 63 },
+                { name: 'Hormel Foods', ticker: 'HRL', sector: 'Consumer Staples', years: 59 },
+                { name: 'Lowe\'s Companies', ticker: 'LOW', sector: 'Consumer Staples', years: 61 },
+                { name: 'Becton, Dickinson', ticker: 'BDX', sector: 'Healthcare', years: 53 },
+                { name: 'S&P Global', ticker: 'SPGI', sector: 'Financials', years: 52 },
+                { name: 'American States Water', ticker: 'AWR', sector: 'Utilities', years: 69 },
+                { name: 'Northwest Natural', ticker: 'NWN', sector: 'Utilities', years: 68 },
+                { name: 'Consolidated Edison', ticker: 'ED', sector: 'Utilities', years: 51 }
+            ];
+
+            const kingsListContainer = document.getElementById('kings-list');
+            const sectorFilter = document.getElementById('sector-filter');
+            const mobileNav = document.getElementById('mobile-nav');
+
+            let kingsChart;
+
+            const renderList = (kings) => {
+                kingsListContainer.innerHTML = '';
+                if (kings.length === 0) {
+                    kingsListContainer.innerHTML = `<p class="text-gray-500 col-span-full text-center">No Dividend Kings found for this sector.</p>`;
+                    return;
+                }
+                kings.forEach(king => {
+                    const kingCard = document.createElement('div');
+                    kingCard.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200';
+                    kingCard.innerHTML = `
+                        <p class="font-bold text-lg text-gray-800">${king.name} (${king.ticker})</p>
+                        <p class="text-gray-600 text-sm">${king.sector}</p>
+                        <p class="text-2xl font-semibold text-[#6B7A8F] mt-2">${king.years} years</p>
+                    `;
+                    kingsListContainer.appendChild(kingCard);
+                });
+            };
+
+            const renderChart = (kings) => {
+                const ctx = document.getElementById('kingsChart').getContext('2d');
+                
+                const sortedKings = [...kings].sort((a, b) => b.years - a.years);
+                const labels = sortedKings.map(k => k.name.length > 16 ? k.name.substring(0, 15) + '...' : k.name);
+                const data = sortedKings.map(k => k.years);
+
+                if (kingsChart) {
+                    kingsChart.destroy();
+                }
+
+                kingsChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Consecutive Years of Dividend Increases',
+                            data: data,
+                            backgroundColor: '#6B7A8F',
+                            borderColor: '#4a5568',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Years'
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    autoSkip: false,
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title: function(context) {
+                                        return sortedKings[context[0].dataIndex].name;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            const filterAndRender = () => {
+                const selectedSector = sectorFilter.value;
+                const filteredKings = selectedSector === 'All'
+                    ? dividendKingsData
+                    : dividendKingsData.filter(king => king.sector === selectedSector);
+                
+                renderList(filteredKings);
+                renderChart(filteredKings);
+            };
+
+            sectorFilter.addEventListener('change', filterAndRender);
+            
+            mobileNav.addEventListener('change', (e) => {
+                window.location.hash = e.target.value;
+            });
+            
+            filterAndRender();
+        });
+    </script>
+</body>
+</html>
